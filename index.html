@@ -3,92 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEURAL_LINK_v4.2</title>
+    <title>NEURAL_SCAN_v5</title>
     <style>
-        body {
-            margin: 0;
-            background: #050505;
-            color: #00ff41;
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Courier New', monospace; }
+        
+        #video-bg {
+            position: fixed;
+            top: 50%; left: 50%;
+            min-width: 100%; min-height: 100%;
+            width: auto; height: auto;
+            transform: translateX(-50%) translateY(-50%) scaleX(-1);
+            filter: grayscale(100%) brightness(50%) contrast(150%);
+            z-index: -1;
         }
 
-        .scanner-line {
+        .overlay {
             position: absolute;
-            width: 100%;
-            height: 2px;
-            background: rgba(0, 255, 65, 0.5);
-            box-shadow: 0 0 15px #00ff41;
-            top: 0;
-            animation: scan 3s linear infinite;
-        }
-
-        .interface-box {
-            border: 1px solid #00ff41;
-            padding: 40px;
-            background: rgba(0, 255, 65, 0.05);
-            backdrop-filter: blur(10px);
-            text-align: center;
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
-        }
-
-        .glitch {
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            animation: glitch 1s linear infinite;
-        }
-
-        .core-button {
-            margin-top: 30px;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 30%, rgba(0,255,65,0.2) 100%);
             border: 2px solid #00ff41;
-            background: transparent;
-            color: #00ff41;
-            cursor: pointer;
-            box-shadow: 0 0 10px #00ff41;
-            transition: 0.3s;
-            font-size: 0.7rem;
+            box-sizing: border-box;
+            pointer-events: none;
         }
 
-        .core-button:active {
-            transform: scale(0.9);
+        .scanner-bar {
+            position: absolute;
+            width: 100%; height: 4px;
             background: #00ff41;
-            color: black;
+            box-shadow: 0 0 20px #00ff41;
+            animation: scan 4s linear infinite;
         }
 
-        @keyframes scan {
-            0% { top: 0%; }
-            100% { top: 100%; }
+        .ui-box {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #00ff41;
+            background: rgba(0,0,0,0.7);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #00ff41;
         }
 
-        @keyframes glitch {
-            2%, 64% { transform: translate(2px,0) skew(0deg); }
-            4%, 60% { transform: translate(-2px,0) skew(0deg); }
-            62% { transform: translate(0,0) skew(5deg); }
-        }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
     </style>
 </head>
 <body>
-    <div class="scanner-line"></div>
-    
-    <div class="interface-box">
-        <div class="glitch">Access Denied</div>
-        <p style="margin-top: 20px; font-size: 0.8rem;">BIOMETRIC SCAN REQUIRED</p>
-        <button class="core-button" onclick="alert('DECRYPTING DATA... Check DM for Cipher.')">INITIALIZE<br>NEURAL LINK</button>
+    <video id="video-bg" autoplay playsinline></video>
+    <div class="overlay"></div>
+    <div class="scanner-bar"></div>
+
+    <div class="ui-box">
+        <h2 style="margin:0; letter-spacing: 5px;">SUBJECT IDENTIFIED</h2>
+        <p id="status">INITIALIZING BIOMETRIC UPLINK...</p>
+        <button onclick="startCamera()" style="background:#00ff41; color:#000; border:none; padding:10px 20px; font-weight:bold; cursor:pointer;">AUTHORIZE ACCESS</button>
     </div>
 
-    <p style="position: fixed; bottom: 20px; font-size: 0.6rem; opacity: 0.5;">
-        ENCRYPTION: AES-256 | SYSTEM: GEMINI_OS
-    </p>
+    <script>
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+                document.getElementById('video-bg').srcObject = stream;
+                document.getElementById('status').innerText = "CONNECTION SECURE. DATA ENCRYPTED.";
+            } catch (err) {
+                document.getElementById('status').innerText = "ENCRYPTION FAILED: PERMISSION DENIED";
+            }
+        }
+    </script>
 </body>
 </html>
+
